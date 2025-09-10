@@ -5,30 +5,46 @@
 
 ## Overview
 
-**JavaSpringBoot_App** is a sample LiveScore gaming application built with **Java Spring Boot**.  
+JavaSpringBoot_App is a sample LiveScore gaming application built with **Spring Boot**.  
 It demonstrates a complete **DevOps CI/CD pipeline** including:
 
-- **GitHub**: Source code management
-- **Jenkins**: Automated build, test, and deployment
-- **Maven**: Build and dependency management
-- **Docker**: Containerization and image publishing
-- **Docker Hub**: Image registry
-- **Terraform**: Infrastructure provisioning (local Docker)
-- **Ansible**: Automated deployment and container management
+- GitHub: Source code management
+- Jenkins: Automated build, test, Docker, and deployment
+- Maven: Build automation
+- Docker: Containerization
+- Docker Hub: Image registry
+- Terraform: Infrastructure provisioning
+- Ansible: Deployment automation
 
-This project is ideal for **showcasing DevOps skills** for recruiters or interviews.
+________________________________________________________________________________
 
----
+## Quick Start
 
-## Features
+1. Clone the repo:
 
-- REST endpoint: `/score`  
-  Returns live game scores for a demo game:
+```bash
+git clone https://github.com/zwelakhem/JavaSpringBoot_App.git
+cd JavaSpringBoot_App
 
-```json
-{
-  "game": "Sky Heroes",
-  "score": "3-2",
-  "status": "live"
-}
+2. Run demo script:
+./demo_run.sh
+
+3. Test API:
+curl http://localhost:8080/score
+Expected output:
+{"game":"Sky Heroes","score":"3-2","status":"live"}
+
+______________________________________________________________________________________
+
+Tech Stack:
+
+Java 17, Spring Boot, Maven, Docker, Jenkins, Docker Hub, Terraform, Ansible, jq
+
+______________________________________________________________________________________
+
+Author
+
+Zwelakhe Msuthu – DevOps Engineer
+GitHub: zwelakhem
+
 
