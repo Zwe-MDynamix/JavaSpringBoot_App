@@ -1,0 +1,24 @@
+- hosts: apphosts
+  become: false
+  vars:
+    docker_image: "zwelakhem/javaspringboot_app"
+    docker_tag: "latest"
+  tasks:
+    - name: Pull image
+      community.docker.docker_image:
+        name: "{{ docker_image }}"
+        tag: "{{ docker_tag }}"
+        source: pull
+    - name: Remove existing container (if any)
+      community.docker.docker_container:
+        name: javaspringboot_app
+        state: absent
+        force_kill: yes
+    - name: Start container
+      community.docker.docker_container:
+        name: javaspringboot_app
+        image: "{{ docker_image }}:{{ docker_tag }}"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "8080:8080"

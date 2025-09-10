@@ -3,11 +3,12 @@ set -e
 
 # === CONFIG ===
 DOCKERHUB_USER="zwelakhem"
-GITHUB_REPO="java-spring-boot_app"
+GITHUB_REPO="JavaSpringBoot_App"
+PROJECT_DIR=~/Documents/$GITHUB_REPO
 
 echo "📦 Creating project folder..."
-mkdir -p ~/java-spring-boot_app
-cd ~/java-spring-boot_app
+mkdir -p "$PROJECT_DIR"
+cd "$PROJECT_DIR"
 
 echo "📄 Generating .gitignore..."
 cat > .gitignore << 'EOF'
@@ -25,7 +26,7 @@ cat > pom.xml << 'EOF'
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example</groupId>
-  <artifactId>java-spring-boot_app</artifactId>
+  <artifactId>JavaSpringBoot_App</artifactId>
   <version>0.1.0</version>
   <packaging>jar</packaging>
   <parent>
@@ -118,7 +119,7 @@ cat > Jenkinsfile << EOF
 pipeline {
   agent any
   environment {
-    IMAGE_NAME = "$DOCKERHUB_USER/java-spring-boot_app"
+    IMAGE_NAME = "$DOCKERHUB_USER/javaspringboot_app"
     DOCKER_TAG = "\${env.BUILD_NUMBER}"
   }
   stages {
@@ -170,10 +171,10 @@ terraform {
 }
 provider "docker" {}
 resource "docker_image" "live_score" {
-  name = "$DOCKERHUB_USER/java-spring-boot_app:latest"
+  name = "$DOCKERHUB_USER/javaspringboot_app:latest"
 }
 resource "docker_container" "live_score" {
-  name  = "java-spring-boot_app"
+  name  = "javaspringboot_app"
   image = docker_image.live_score.latest
   ports { internal = 8080, external = 8080 }
 }
@@ -190,7 +191,7 @@ cat > ansible/deploy.yml << EOF
 - hosts: apphosts
   become: false
   vars:
-    docker_image: "$DOCKERHUB_USER/java-spring-boot_app"
+    docker_image: "$DOCKERHUB_USER/javaspringboot_app"
     docker_tag: "latest"
   tasks:
     - name: Pull image
@@ -200,12 +201,12 @@ cat > ansible/deploy.yml << EOF
         source: pull
     - name: Remove existing container (if any)
       community.docker.docker_container:
-        name: java-spring-boot_app
+        name: javaspringboot_app
         state: absent
         force_kill: yes
     - name: Start container
       community.docker.docker_container:
-        name: java-spring-boot_app
+        name: javaspringboot_app
         image: "{{ docker_image }}:{{ docker_tag }}"
         state: started
         restart_policy: always
@@ -213,20 +214,20 @@ cat > ansible/deploy.yml << EOF
           - "8080:8080"
 EOF
 
-echo "✅ Files generated."
+echo "✅ Files generated successfully."
 
-echo "🔧 Initializing git..."
-git init
+echo "🔧 Initializing Git..."
+git init -b development
 git add .
-git commit -m "Initial commit: Java Spring Boot App CI/CD demo"
+git commit -m "Initial commit - Java Spring Boot App CI/CD setup"
 
 echo "📡 Creating GitHub repo and pushing code..."
+gh auth login
 gh repo create $GITHUB_REPO --public --source=. --remote=origin --push
 
-echo "🎉 Bootstrap complete!"
-echo "Next steps:"
+echo "🎉 Bootstrap complete! Next steps:"
 echo "1. Open Jenkins at http://localhost:8080"
-echo "2. Create Pipeline job pointing to GitHub repo"
+echo "2. Create Pipeline job named $GITHUB_REPO pointing to GitHub repo"
 echo "3. Add DockerHub credentials in Jenkins with ID 'dockerhub-creds'"
 echo "4. Trigger Build Now 🚀"
 
